@@ -14,9 +14,19 @@
             var camera = new BABYLON.ArcRotateCamera('cam',Math.PI/2,Math.PI/2,10, new BABYLON.Vector3(0,0,0), scene);
             camera.attachControl(canvas,true);
             var light = new BABYLON.PointLight('light1', new BABYLON.Vector3(1,20,-10), scene);
-            var sphere = BABYLON.MeshBuilder.CreateSphere('s', {diameter:2}, scene);
+            light.parent = camera;
 
-            engine.runRenderLoop(function() { scene.render(); });
+            var sphere = BABYLON.MeshBuilder.CreateSphere('s', {diameter:2}, scene);
+            var sphere1 = BABYLON.MeshBuilder.CreateSphere('s', {diameter:1}, scene);
+            var sphere2 = BABYLON.MeshBuilder.CreateSphere('s', {diameter:0.5}, scene);
+
+            engine.runRenderLoop(function() { 
+                var phi = performance.now()*0.001;
+                sphere1.position.copyFromFloats(1.5*Math.cos(phi), 0, 1.5*Math.sin(phi));
+                phi *= 7;
+                sphere2.position.copyFromFloats(2.25*Math.cos(phi), 0, 2.25*Math.sin(phi));                
+                scene.render(); 
+            });
             window.addEventListener('resize', function() { engine.resize(); });
         </script>
     </body>
