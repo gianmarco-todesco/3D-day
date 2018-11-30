@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
+    <title>Babylon - Getting Started</title>
+    <script src="babylon.2.3.js"></script>
+    <style>
+        html, body {
+            overflow: hidden;
+            width   : 100%;
+            height  : 100%;
+            margin  : 0;
+            padding : 0;
+        }
+
+        #renderCanvas {
+            width   : 100%;
+            height  : 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var ph;
+        var updateMesh;
+
+        var foo;
+        var cubes;
+        window.addEventListener('DOMContentLoaded', function() {
+            // get the canvas DOM element
+            var canvas = document.getElementById('renderCanvas');
+
+            // load the 3D engine
+            var engine = new BABYLON.Engine(canvas, true);
+            var scene = new BABYLON.Scene(engine);
+
+            // create a FreeCamera, and set its position to (x:0, y:5, z:-10)
+            // var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5,-10), scene);
+            var camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", -Math.PI/2, Math.PI/2, 10, new BABYLON.Vector3(0, 0, 0), scene);
+
+            // target the camera to scene origin
+            camera.setTarget(BABYLON.Vector3.Zero());
+
+            // attach the camera to the canvas
+            camera.attachControl(canvas, false);
+
+            // create a basic light, aiming 0,1,0 - meaning, to the sky
+            // var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene);
+
+            var light = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(-0.1, -2, 1), scene);
+            	light.position = new BABYLON.Vector3(0, 40, -20);
+            	light.intensity = 0.5;
+
+            var emiLight = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+
+          //  createPolyhedron(scene);
+
+
+
+            var redMat = new BABYLON.StandardMaterial("redMat", scene);
+            redMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
+
+            var greenMat = new BABYLON.StandardMaterial("greenMat", scene);
+            greenMat.diffuseColor = new BABYLON.Color3(0, 1, 0);
+
+            var blueMat = new BABYLON.StandardMaterial("blueMat", scene);
+            blueMat.diffuseColor = new BABYLON.Color3(0, 0, 1);
+
+            var cyanMat = new BABYLON.StandardMaterial("cyanMat", scene);
+            cyanMat.diffuseColor = new BABYLON.Color3(0, 1, 1);
+
+            var yellowMat = new BABYLON.StandardMaterial("yellowMat", scene);
+            yellowMat.diffuseColor = new BABYLON.Color3(1, 1, 0);
+
+            yellowMat.specularColor = new BABYLON.Color3(1, 1, 1);
+            yellowMat.roughness = 0.001;
+
+            ph = new BABYLON.Mesh("fiveCubes", scene);
+
+            var mats = [redMat, greenMat, blueMat, cyanMat, yellowMat];
+
+            var q = Math.PI/4 - Math.asin(1.0/(Math.tan(2*Math.PI/5)*Math.sqrt(2)));
+
+         cubes = [];
+            var rot = [];
+            for(var i=0;i<5;i++) {
+              var box = BABYLON.Mesh.CreateBox("box1", 2, scene);
+              box.enableEdgesRendering();
+              box.edgesWidth = 4.0;
+              box.edgesColor = new BABYLON.Color4(0, 0, 1, 1);
+              box.material = mats[i];
+              box.rotate(new BABYLON.Vector3(0,1,0), 2*Math.PI*i/5);
+              box.rotate(new BABYLON.Vector3(1,0,0), q);
+              cubes.push(box);
+              rot.push(box.rotationQuaternion.clone());
+              box.status = 0;
+              box.t = 0;
+            }
+
+
+            foo = function() {
+
+                for(var i=0;i<5;i++) {
+                    var box = cubes[i];
+                    if(box.status==0 && box.t==0.0 || box.status==1 && box.t==1.0) continue;
+                    if(box.status==1) {box.t+=0.1; if(box.t>1.0)box.t=1.0; }
+                    else {box.t-=0.1; if(box.t<0.0)box.t=0.0; }
+                    var t = box.t;
+                    var p0 = new BABYLON.Vector3(0,0,0);
+                    var p1 = new BABYLON.Vector3((i-2)*3,-2,0);
+                    cubes[i].position = BABYLON.Vector3.Lerp(p0,p1,t);
+
+                    cubes[i].rotationQuaternion = BABYLON.Quaternion.Slerp(rot[i],BABYLON.Quaternion.Identity(), t);
+
+              }
+            }
+
+
+            scene.registerBeforeRender(function () {
+                foo();
+            } );
+
+            // create a built-in "ground" shape; its constructor takes the same 5 params as the sphere's one
+            //var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene);
+
+
+            // Ground
+            var playgroundSize = 10;
+            var ground = BABYLON.Mesh.CreateGround("ground", playgroundSize, playgroundSize, 1, scene, false);
+            var groundMaterial = new BABYLON.StandardMaterial("ground", scene);
+            groundMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+            groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            ground.material = groundMaterial;
+
+            ground.position.y = -4;
+
+/*
+            var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+	          shadowGenerator.getShadowMap().renderList.push(ph);
+	          // shadowGenerator.useVarianceShadowMap = true;
+            shadowGenerator.bias = 0.00001;
+*/
+            // shadowGenerator.usePoissonSampling = true;
+	          //var shadowGenerator2 = new BABYLON.ShadowGenerator(1024, light2);
+	          //shadowGenerator2.getShadowMap().renderList.push(torus);
+	          //shadowGenerator2.usePoissonSampling = true;
+
+ 	          ground.receiveShadows = true;
+
+              canvas.addEventListener("click", function (evt) {
+                 // We try to pick an object
+                 var pickResult = scene.pick(evt.clientX, evt.clientY);
+                 console.log(pickResult,evt.clientX, evt.clientY);
+                 if(pickResult.pickedMesh != null) {
+                     var box = pickResult.pickedMesh;
+                     box.status = 1-box.status;
+                 }
+
+              });
+
+              canvas.addEventListener("pointerdown", onPointerDown, false);
+
+              scene.onDispose = function() {
+                  canvas.removeEventListener("pointerdown", onPointerDown);
+              }
+
+              function onPointerDown() {
+                  console.log(arguments);
+              }
+/*
+            canvas.addEventListener("pointerup", onPointerUp, false);
+            canvas.addEventListener("pointermove", onPointerMove, false);
+
+            scene.onDispose = function () {
+                canvas.removeEventListener("pointerdown", onPointerDown);
+                canvas.removeEventListener("pointerup", onPointerUp);
+                canvas.removeEventListener("pointermove", onPointerMove);
+            }
+  */
+
+            // call the createScene function
+
+            // run the render loop
+            engine.runRenderLoop(function(){
+                scene.render();
+                // console.log("qui");
+            });
+
+            // the canvas/window resize event handler
+            window.addEventListener('resize', function(){
+                engine.resize();
+            });
+        });
+    </script>
+  </body>
+</html>
