@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hello World</title>
+        <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    </head>
+    <body>
+        <h1>Ciao, mondo!</h1>
+        <canvas id="c" width="600" height="600"></canvas>
+        <script>
+            var canvas = document.getElementById('c');
+            var engine = new BABYLON.Engine(canvas, true);
+            var scene = new BABYLON.Scene(engine);
+            var camera = new BABYLON.ArcRotateCamera('cam',0,0,5, new BABYLON.Vector3(0,0,0), scene);
+            camera.attachControl(canvas,true);
+            var light = new BABYLON.PointLight('light1', new BABYLON.Vector3(7,20,-10), scene);
+            var cube = BABYLON.MeshBuilder.CreateBox('s', {size:1}, scene);
+            engine.runRenderLoop(function() {   scene.render();  });
+        </script>
+    </body>
+</html>
+
