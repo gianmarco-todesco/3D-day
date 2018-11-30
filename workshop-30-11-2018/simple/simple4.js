@@ -16,7 +16,9 @@ window.addEventListener("DOMContentLoaded", function() {
     light = new BABYLON.PointLight('light1', new BABYLON.Vector3(1,20,-10), scene);
     light.parent = camera;
 
-    var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+    shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+    shadowGenerator.setDarkness(0.5);
+    shadowGenerator.usePoissonSampling = true;
     
     ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 30, height: 30, subdivsions: 4}, scene);
     ground.material = new BABYLON.StandardMaterial("m",scene);
