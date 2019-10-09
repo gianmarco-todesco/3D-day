@@ -27,15 +27,24 @@ function createModel() {
     box.position.set(-1,1,0);
 }
 
-function setPos(x) {
-    var dx = Math.floor(x);
-    box.position.set(-1+dx*2,1,0);
-    box.rotation.z = -Math.PI/2 * (x-dx);
+function setPos(t) {
+    var m = 5;
+    var x=0, s=0;
+    if(t<1) { s = -1+t; } 
+    else if(t-1<m) {
+        i = Math.floor(t-1);
+        s = t-1-i;
+        x = i*2;
+    } else {
+        s = Math.min(2, t-1-m);
+        x = 2*m;
+    }
+    box.position.set(-6+x,1,0);
+    box.rotation.z = -Math.PI/2 * s;
 }
 
 function animate() {
-    var t = performance.now() * 0.0005;
-    // t -= Math.floor(t);
-    // setPos((t*2-1)*2);
-    setPos(2*Math.cos(t)+0.5);
+    var t = performance.now() * 0.0001;
+    t -= Math.floor(t);
+    setPos(t*8);
 }
