@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
+    <title>Moebius</title>
+    <script src="babylon.js"></script>
+    <script src="title.js"></script>
+
+    <style>
+        html, body {
+            overflow: hidden;
+            width   : 100%;
+            height  : 100%;
+            margin  : 0;
+            padding : 0;
+        }
+
+        #renderCanvas {
+            width   : 100%;
+            height  : 100%;
+            touch-action: none;
+        }
+        .overlay {
+            position: absolute;
+            top:0px;
+            left:0px;
+            width:100%;
+            height:100%;
+            pointer-events: none;
+        }
+        h1 {
+            color: white;
+            font-family: Calibri;
+            font-weight: bold;
+            font-size:100px;
+            text-align: center;
+            margin:5px 0 5px 0;
+        }
+        h2 {
+            color:gray;
+            text-align:center;
+            margin-top:0px;
+            font-family: Calibri;
+            font-size:50px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <div class="overlay">
+        <h1>Paesaggi matematici</h1>
+        <h2>gianmarco.todesco@gmail.com</h2>
+    </div>
+</body>
+</html>
